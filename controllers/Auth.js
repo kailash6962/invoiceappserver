@@ -10,8 +10,8 @@ var nodemailer = require('nodemailer');
 
 
 export const register = async (req,res) => {
-    console.log(req.body);
-    const { name, email, password, custCode_prefix, profile_img } = req.body;
+    console.log(req.fields);
+    const { name, email, password, custCode_prefix, profile_img } = req.fields;
     let token = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2);
 
     sendVerificationEmail(req.get('host'),email,token,name);
@@ -53,7 +53,7 @@ export const register = async (req,res) => {
             UserId:NewUserid,
             OrgId:Orgid,
             ReadOnly:true,
-            AccessLinks:(["CustomerList","CustomerCreate","CustomerUpdate","CustomerDelete","ProductList","ProductCreate","ProductUpdate","ProductDelete"])
+            AccessLinks:(['CustomerUpdate', 'CustomerDelete', 'ProductList', 'ProductCreate', 'ProductUpdate', 'ProductDelete', 'InvoiceList', 'InvoiceUpdate', 'InvoiceDelete', 'ExpenseList', 'ExpenseCreate', 'StaffCreate', 'StaffList', 'ExpenseUpdate', 'StaffUpdate', 'StaffDelete', 'ExpenseDelete', 'UserRolesUpdate', 'UserRolesCreate', 'OrganizationUpdate', 'AccountUpdate', 'UserRolesDelete', 'InvoiceCreate', 'ReportCreate', 'Report_CustomerBalances', 'UserRolesList', 'AccountView', 'OrganizationView', 'CustomerCreate', 'CustomerList'])
           });
 
         const user = new User(object);
@@ -229,7 +229,7 @@ const generateOrgId = async () => {
 
 export const login = async (req,res) => {
     
-    const {email, password} = req.body;
+    const {email, password} = req.fields;
     try{
         let user = await User.findOne({ email }).exec();
 
@@ -301,9 +301,9 @@ export const verifyemail = async (req,res) => {
 
 //SEND OTP EMAIL
 export const sendotpmail = async (req,res) => {
-    console.log('body',req.body);
+    console.log('body',req.fields);
    
-     const {otp, email} = req.body;
+     const {otp, email} = req.fields;
     try{
         let user = await User.findOne({ email:email }).exec();
         
@@ -331,9 +331,9 @@ export const sendotpmail = async (req,res) => {
 
 //UPDATE PASSWORD
 export const updatepassword = async (req,res) => {
-    console.log('body',req.body);
+    console.log('body',req.fields);
    
-     const {otp, email, password} = req.body;
+     const {otp, email, password} = req.fields;
     try{
         let user = await User.findOne({ email:email,register_token:btoa(otp) }).exec();
        
@@ -364,4 +364,17 @@ export const getuseraccesslinks = async (req,res) => {
         let userRole = await Role.findOne({ OrgId:user.OrgId,RoleName:user.Role }).exec();
         res.status(200).send(userRole.AccessLinks);
     }
+}
+//PERMISSION LINKS
+export async function getUserDataByToken(req){
+    var token = req.headers['authorization'];
+    token = token.substring(7);
+    const verify = await jwt.verify(token,process.env.JWT_SECRET);
+        var userData = await User.findById(verify._id,
+          {
+            "profile_img":0,
+            "password":0,
+            "register_token":0
+          });
+    return userData;
 }

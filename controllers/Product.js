@@ -1,9 +1,15 @@
 import Product from '../models/Product';
+import { getUserDataByToken } from "../controllers/Auth";
 
  export const create = async (req,res) => {
         console.log("req.body",req.fields);
   try {
+    var userData = await getUserDataByToken(req);
+    var userOrgId = userData.OrgId;
+    var userId = userData.UserId;
     let fields = req.fields;
+    fields.OrgId = userOrgId;
+    fields.UserId = userId;
 
     let product = new Product(fields);    
     product.save((err, result) => {
@@ -23,10 +29,10 @@ import Product from '../models/Product';
 
 //READ ALL
 export const readall = async (req,res) => {
-  let SessionUser = req.query.SessionUser;
-  console.log(SessionUser);
+  var userData = await getUserDataByToken(req);
+  var userOrgId = userData.OrgId;
   try {
-     let product = await Product.find({OrgId:SessionUser}).exec();
+     let product = await Product.find({OrgId:userOrgId}).exec();
      console.log(product);
        res.json(product);
   } catch (err) {
@@ -41,8 +47,7 @@ export const readall = async (req,res) => {
 export const createcode = async (req,res) => {
   try {
      let products = await Product.find({OrgId:req.query.SessionUser}).sort({ProdId:-1}).limit(1).exec();//LAST PRODCODE
-     //let getuser = await User.find({name:req.query.SessionUser}).exec();//GET PREFIX FROM USER
-    //console.log(products);
+
     let PRODUCT_PREFIX = 'PROD';//getuser[0].PRODCode_prefix;
     if(products.length>0){
      var code = (String(parseInt(products[0].ProdId.match(/(\d+)/)[0])+1).padStart(6, '0'));//NEW PRODCODE

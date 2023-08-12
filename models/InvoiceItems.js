@@ -1,39 +1,42 @@
 import mongoose from "mongoose";
 const {Schema} = mongoose;
 
-const CustomerSchema = new Schema({
-    Custid: {
+const InvoiceItemsSchema = new Schema({
+    prodName: {
+        type: String,
+        trim: true
+    },
+    Invid: {
         type: String,
         trim: true,
-        required : 'CustCode is required'
+        required : 'InvoiceId is required'
     },
-    custName: {
+    prodDesc: {
+        type: String,
+        trim: true
+    },
+    rate: {
         type: String,
         trim: true,
-        required : 'Name is required'
+        required : 'price is required'
     },
-    AddrLine1: {
-        type: String,
-        trim: true,
-        required : 'Addr 1 is required'
-    },
-    AddrLine2: {
-        type: String,
-        trim: true,
-        required : 'Addr 2 is required'
-    },
-    email: {
+    unit: {
         type: String,
         trim: true,
     },
-    mobile: {
+    quantity: {
         type: String,
         trim: true,
+        unique: false,
+    },
+    lineTotal: {
+        type: String,
+        trim: true,
+        unique: false,
     },
     UserId: {
         type: String,
         trim: true,
-        required : 'UserId is required'
     },
     OrgId: {
         type: String,
@@ -42,4 +45,4 @@ const CustomerSchema = new Schema({
     },
 },{ timestamps: true });
 
-export default mongoose.model("Customers",CustomerSchema);
+export default mongoose.model("InvoiceItems",InvoiceItemsSchema);
