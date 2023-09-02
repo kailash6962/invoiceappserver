@@ -19,7 +19,7 @@ const {
 
 router.post('/invpay-create', requireSignin, formidable(), create);
 router.get('/invpay-createcode', requireSignin, formidable(), createcode);
-router.get('/invpay-read', requireSignin, formidable(),  readall);
+router.post('/invpay-read', requireSignin, formidable(),  readall);
 router.post('/invpay-readone', requireSignin, formidable() ,  readone);
 // router.post('/invpay-update', requireSignin, formidable() ,  update);
 router.post('/invpay-remove', requireSignin, formidable() ,  remove);

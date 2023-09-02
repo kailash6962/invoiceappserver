@@ -63,7 +63,6 @@ export const create = async (req, res) => {
       let invoice = new Invoice(fields);
       var InvItems = fields.InvoiceItems;
       for (let i = 0; i < Object.keys(InvItems).length; ++i) {
-        console.log(InvItems[i]);
         InvItems[i].Invid = fields.Invid;
         InvItems[i].UserId = fields.UserId;
         InvItems[i].OrgId = fields.OrgId;
@@ -107,6 +106,8 @@ export const update = async (req, res) => {
       Invid: fields.Invid,
       OrgId: userOrgId,
     }).exec();
+    if(parseFloat(invCheck.AmtPaid)>parseFloat(fields.AmtTotal))
+    return res.status(200).send(failureResponse({message:"Paid amount is greater than Invoice amount. Please Check and Try again"}));
     if (customers && org && invCheck) {
       let data = fields;
     
@@ -125,7 +126,7 @@ export const update = async (req, res) => {
     let validation = new Validator(data, rules);
     
     if(validation.fails())
-    res.status(200).send(validation.errors);
+    return res.status(200).send(failureResponse(validation.errors));
     else   
     { 
       let inv = await Invoice.updateOne({
@@ -160,13 +161,11 @@ export const update = async (req, res) => {
 export const read = async (req, res) => {
   
   var userData = await getUserDataByToken(req);
-  console.log('req :162 ', req.fields );
   var filter = {};
   if(req.fields.custCode)
   filter.custCode = req.fields.custCode;
   if(req.fields.Status=='Pending')
   filter.Status = {$ne:'FullyPaid'};
-  console.log('filter ',filter);
   try {
     let data = await Invoice.aggregate([
       {
@@ -186,7 +185,8 @@ export const read = async (req, res) => {
           ],
           as: 'CustomerData'
         }
-      }
+      },
+      { $sort: { createdAt: -1 } }, // 1 for ascending, -1 for descending
   ]).exec();
     res.json(data);
   } catch (err) {
@@ -264,7 +264,6 @@ export const createcode = async (req, res) => {
     let getuser = await Organization.findOne({
       OrgId: userOrgId,
     }).exec(); //GET PREFIX FROM USER
-    console.log(invoice);
     let CODE_PREFIX = getuser.invCode_prefix;
     if (invoice) {
       var code = String(parseInt(invoice.Invid.match(/(\d+)/)[0]) + 1).padStart(

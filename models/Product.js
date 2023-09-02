@@ -7,19 +7,67 @@ const ProductSchema = new Schema({
         trim: true,
         required : 'ProdId is required'
     },
+    ProdHSN: {
+        type: String,
+        trim: true,
+    },
     prodName: {
         type: String,
         trim: true,
         required : 'prodName is required'
     },
+    Category: {
+        type: String,
+        trim: true,
+        required : 'category is required'
+    },
     description: {
         type: String,
         trim: true,
     },
-    price: {
+    costPrice: {
         type: String,
         trim: true,
-        required : 'price is required'
+        required : 'costPrice is required'
+    },
+    costPriceTax: {
+        type: Boolean,
+        trim: true,
+        required : 'costPriceTax is required'
+    },
+    sellingPrice: {
+        type: String,
+        trim: true,
+        required : 'costPrice is required'
+    },
+    Type: {
+        type: String,
+        trim: true,
+        required : 'Type is required'
+    },
+    sellingPriceTax: {
+        type: Boolean,
+        trim: true,
+        required : 'sellingPriceTax is required'
+    },
+    wholeSaleCount: {
+        type: Number,
+        trim: true,
+        required : 'wholeSaleCount is required'
+    },
+    wholeSalePrice: {
+        type: String,
+        trim: true,
+        required : 'wholeSalePrice is required'
+    },
+    wholeSalePriceTax: {
+        type: Boolean,
+        trim: true,
+        required : 'wholeSalePriceTax is required'
+    },
+    openingQuantity: {
+        type: Number,
+        trim: true,
     },
     unit: {
         type: String,
@@ -27,6 +75,16 @@ const ProductSchema = new Schema({
         required : 'unit is required'
     },
     stockCounts: {
+        type: Number,
+        trim: true,
+        unique: false,
+    },
+    minimumStockCounts: {
+        type: Number,
+        trim: true,
+        unique: false,
+    },
+    stockLocationCode: {
         type: String,
         trim: true,
         unique: false,
