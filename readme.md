@@ -1,6 +1,3 @@
-# Save the generated README content to a file for user to download
-
-readme_content = """
 # 🧾 InvoiceApp Server
 
 A powerful backend service for managing client invoices, authentication, file uploads, email notifications, and more — built with Node.js, Express, and MongoDB.
